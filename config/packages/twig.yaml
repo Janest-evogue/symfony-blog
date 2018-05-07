@@ -1,0 +1,7 @@
+twig:
+    paths: ['%kernel.project_dir%/templates']
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    # intégration du template de formulaire 
+    # en boostrap 4
+    form_themes: ['bootstrap_4_layout.html.twig']
