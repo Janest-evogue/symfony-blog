@@ -94,4 +94,23 @@ class CategoryController extends Controller
             ]
         );
     }
+    
+    /**
+     * 
+     * @Route("/delete/{id}")
+     */
+    public function delete(Category $category)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($category);
+        $em->flush();
+        
+        $this->addFlash(
+            'success',
+            'La catégorie est supprimée'
+        );
+        
+        return $this->redirectToRoute('app_admin_category_index');
+    }
+   
 }

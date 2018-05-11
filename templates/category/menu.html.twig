@@ -1,0 +1,12 @@
+{# category/menu.html.twig #}
+<div class="navbar-collapse">
+    <ul class="navbar-nav">
+        {% for category in categories %}  
+            <li class="nav-item">
+                <a class="nav-link">
+                    {{ category.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
