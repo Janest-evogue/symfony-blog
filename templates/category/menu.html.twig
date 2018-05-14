@@ -1,9 +1,16 @@
 {# category/menu.html.twig #}
+{#
+Ajouter une page /categorie/{id}
+qui affiche le nom de la catégorie en titre
+ajouter le href vers cette page dans la balise <a>
+#}
+
 <div class="navbar-collapse">
     <ul class="navbar-nav">
         {% for category in categories %}  
             <li class="nav-item">
-                <a class="nav-link">
+                <a class="nav-link"
+                   href="{{ path('app_category_index', {id: category.id}) }}">
                     {{ category.name }}
                 </a>
             </li>

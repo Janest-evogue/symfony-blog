@@ -22,7 +22,11 @@ class CategoryType extends AbstractType
                 // tableau d'options
                 [
                     // contenu de la balise label
-                    'label' => 'Nom'
+                    'label' => 'Nom',
+                    // si l'on veut ajouter une classe à l'input
+                    'attr' => [
+                        'class' => 'test'
+                    ]
                 ]
             )
         ;

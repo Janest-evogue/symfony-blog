@@ -62,7 +62,7 @@ class SecurityController extends Controller
         $error = $auth->getLastAuthenticationError();
         $lastUsername = $auth->getLastUsername();
         
-        dump($error);
+        dump($error, $lastUsername);
         
         if (!empty($error)) {
             $this->addFlash('error', "Identifiants incorrects");

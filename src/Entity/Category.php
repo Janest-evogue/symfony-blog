@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
@@ -30,6 +32,18 @@ class Category
      *  maxMessage="Le nom ne doit pas dépasser {{ limit }} caractères")
      */
     private $name;
+    
+    /**
+     *
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="category")
+     */
+    private $articles;
+
+    public function __construct()
+    {
+        $this->articles = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -46,5 +60,20 @@ class Category
         $this->name = $name;
 
         return $this;
+    }
+    
+    public function getArticles(): Collection {
+        return $this->articles;
+    }
+
+    public function setArticles(Collection $articles) {
+        $this->articles = $articles;
+        return $this;
+    }
+
+        
+    public function __toString()
+    {
+        return $this->name;
     }
 }
