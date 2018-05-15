@@ -5,6 +5,8 @@ namespace App\Controller\Admin;
 use App\Entity\Article;
 use App\Form\ArticleType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -48,16 +50,26 @@ class ArticleController extends Controller
         // Si enregistrement ok, rediriger vers la liste avec un
         // message de confirmation
         $em = $this->getDoctrine()->getManager();
+        $originalImage = null;
         
-        if (is_null($id)) {
+        if (is_null($id)) { // création
             $article = new Article();
             $article->setAuthor($this->getUser());
-        } else {
+        } else { // modification
             $article = $em->find(Article::class, $id);
             
             if (is_null($article)) {
                 throw new NotFoundHttpException();
             }
+            
+            if (!is_null($article->getImage())) {
+                // nom du fichier en bdd
+                $originalImage = $article->getImage();
+                $article->setImage(
+                    new File($this->getParameter('upload_dir') . $originalImage)
+                );
+            }
+            
         }
         
         $form = $this->createForm(ArticleType::class, $article);
@@ -66,6 +78,35 @@ class ArticleController extends Controller
         
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
+                /** @var UploadedFile|null */
+                $image = $article->getImage();
+                
+                // s'il y a eu une image uploadée
+                if (!is_null($image)) {
+                    // nom du fichier que l'on va enregistrer
+                    $filename = uniqid() . '.' . $image->guessExtension();
+                    
+                    $image->move(
+                        // répertoire de destination
+                        // cf config/services.yaml
+                        $this->getParameter('upload_dir'),
+                        $filename
+                    );
+                    
+                    // on sette l'image avec le nom qu'on lui a donné
+                    $article->setImage($filename);
+                    
+                    // suppression de l'ancienne image de l'article
+                    // s'il on est en modification d'un article qui en avait
+                    // déjà une
+                    if (!is_null($originalImage)) {
+                        unlink($this->getParameter('upload_dir') . $originalImage);
+                    }
+                } else {
+                    // sans upload, on garde l'ancienne image
+                    $article->setImage($originalImage);
+                }
+                
                 $em->persist($article);
                 $em->flush();
                 
@@ -82,7 +123,8 @@ class ArticleController extends Controller
         return $this->render(
             'admin/article/edit.html.twig',
             [
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'original_image' => $originalImage
             ]
         );
     }

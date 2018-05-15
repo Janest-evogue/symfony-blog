@@ -8,6 +8,13 @@
     {{ form_row(form.title) }}
     {{ form_row(form.content) }}
     {{ form_row(form.category) }}
+    {{ form_row(form.image) }}
+    {% if original_image is not null %}
+        <p>
+            Actuellement :
+            <img src="{{ asset('images/' ~ original_image) }}">
+        </p>
+    {% endif %}
     <div class="form-btn-group text-right">
         <button type="submit" class="btn btn-primary">Enregistrer</button>
         <a class="btn btn-secondary" href="{{ path('app_admin_article_index') }}">

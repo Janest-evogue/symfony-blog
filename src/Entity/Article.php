@@ -49,6 +49,13 @@ class Article
      * @var User
      */
     private $author;
+    
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\Image()
+     * @var string
+     */
+    private $image;
 
     public function __construct()
     {
@@ -112,6 +119,15 @@ class Article
 
     public function setAuthor(User $author) {
         $this->author = $author;
+        return $this;
+    }
+
+    public function getImage() {
+        return $this->image;
+    }
+
+    public function setImage($image) {
+        $this->image = $image;
         return $this;
     }
 

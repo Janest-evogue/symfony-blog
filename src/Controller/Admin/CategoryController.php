@@ -101,14 +101,21 @@ class CategoryController extends Controller
      */
     public function delete(Category $category)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($category);
-        $em->flush();
-        
-        $this->addFlash(
-            'success',
-            'La catégorie est supprimée'
-        );
+        if ($category->getArticles()->isEmpty()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($category);
+            $em->flush();
+
+            $this->addFlash(
+                'success',
+                'La catégorie est supprimée'
+            );
+        } else {
+            $this->addFlash(
+                'error',
+                'La catégorie ne peut pas être supprimée car elle contient des articles'
+            );
+        }
         
         return $this->redirectToRoute('app_admin_category_index');
     }
