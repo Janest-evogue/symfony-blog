@@ -1,0 +1,17 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <h1>{{ article.title }}</h1>
+    <p>
+        Par {{ article.author }},
+        <em>{{ article.publicationDate|date('d/m/Y H:i') }}</em><br>
+        <strong>Dans {{ article.category }}</strong>
+    </p>
+    {% if article.image is not null %}
+        <div class="text-center">
+            <img src="{{ asset('images/' ~ article.image) }}">
+        </div>
+    {% endif %}
+    <p>{{ article.content|nl2br }}</p>
+    
+{% endblock %}
