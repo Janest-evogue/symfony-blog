@@ -6,7 +6,7 @@
     
     <h2>Articles</h2>
     {% for article in category.articles %}
-        {{ article.title }}<br>
+        <a href="{{ path('app_article_index', {id: article.id}) }}">{{ article.title }}</a><br>
     {% else %}
         <p>Aucun article dans cette catégorie</p>
     {% endfor %}

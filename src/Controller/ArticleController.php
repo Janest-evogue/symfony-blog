@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
+use App\Form\CommentType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -14,7 +17,7 @@ class ArticleController extends Controller
     /**
      * @Route("/{id}")
      */
-    public function index(Article $article)
+    public function index(Request $request, Article $article)
     {
         // faire la page qui affiche toutes les informations
         // de l'article ici et ajouter le liens sur les titres
@@ -30,11 +33,40 @@ class ArticleController extends Controller
          * 
          * - Lister les commentaires de l'article en dessous
          */
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $comment
+                    ->setArticle($article)
+                    ->setUser($this->getUser())
+                ;
+                
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($comment);
+                $em->flush();
+                
+                $this->addFlash('success', 'Votre commentaire est enregistré');
+                
+                // redirection sur la même page pour ne pas être en POST
+                return $this->redirectToRoute(
+                    // $request->get('_route') = la route de la page courante
+                    $request->get('_route'),
+                    [
+                        'id' => $article->getId()
+                    ]
+                );
+            }
+        }
         
         return $this->render(
             'article/index.html.twig',
             [
-                'article' => $article
+                'article' => $article,
+                'form' => $form->createView()
             ]
         );
     }

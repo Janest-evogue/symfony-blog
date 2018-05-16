@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use DateTime;
+use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,7 +35,7 @@ class Article
 
     /**
      * @ORM\Column(type="datetime")
-     * @var \DateTime
+     * @var DateTime
      */
     private $publicationDate;
 
@@ -57,9 +61,18 @@ class Article
      */
     private $image;
 
+    /**
+     * les commentaires liés à l'article
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="article", cascade={"remove"})
+     * Pour choisir l'ordre de tri par défaut :
+     * @ORM\OrderBy({"publicationDate" = "DESC"})
+     */
+    private $comments;
+    
     public function __construct()
     {
-        $this->publicationDate = new \DateTime();
+        $this->publicationDate = new DateTime();
     }
 
     
@@ -97,7 +110,7 @@ class Article
         return $this->publicationDate;
     }
 
-    public function setPublicationDate(\DateTimeInterface $publicationDate): self
+    public function setPublicationDate(DateTimeInterface $publicationDate): self
     {
         $this->publicationDate = $publicationDate;
 
@@ -128,6 +141,15 @@ class Article
 
     public function setImage($image) {
         $this->image = $image;
+        return $this;
+    }
+
+    public function getComments(): Collection {
+        return $this->comments;
+    }
+
+    public function setComments(Collection $comments) {
+        $this->comments = $comments;
         return $this;
     }
 

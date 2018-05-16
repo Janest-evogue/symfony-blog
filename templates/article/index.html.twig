@@ -13,5 +13,36 @@
         </div>
     {% endif %}
     <p>{{ article.content|nl2br }}</p>
+    <hr>
+    <h2>Commentaires</h2>
     
+    {# formulaire commentaire #}
+    {% if app.user is not null %}
+        {{ form_start(form) }}
+        {{ form_row(form.content) }}
+        <div class="form-btn-group pull-right">
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+        <div class="clearfix"></div>
+        {{ form_end(form) }}
+    {% else %}
+        <div class="alert alert-info">
+            Vous devez être connecté pour publier un commentaire.
+        </div>
+    {% endif %}
+    <hr>
+    {# liste commentaires #}
+    {% for comment in article.comments %}
+        <h5>
+            {{ comment.user }}
+            <small>
+                {{ comment.publicationDate|date('d/m/Y H:i') }}
+            </small>
+        </h5>
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                {{ comment.content|nl2br }}
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}
